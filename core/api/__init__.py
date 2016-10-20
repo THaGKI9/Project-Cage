@@ -5,3 +5,4 @@ from flask import Blueprint
 bp = Blueprint('api', __name__)
 
 from . import user
+from . import auth

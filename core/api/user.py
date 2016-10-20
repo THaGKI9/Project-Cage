@@ -42,7 +42,6 @@ def get_users():
 
     Permission required: ``READ_USER``
     """
-    # TODO: add parameter ``order``
     default_limit = app_config['USER_LIST_DEFAULT_LIMIT']
     limit = request.args.get('limit', default_limit, type=int)
     page = request.args.get('page', 1, type=int)

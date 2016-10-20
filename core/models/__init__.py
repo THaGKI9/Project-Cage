@@ -57,11 +57,6 @@ class User(db.Model, UserMixin):
         raw = (plain_password + salt).encode('utf-8')
         self.password = sha1(raw).hexdigest()
 
-    def encode_password(self, plain_password, timestamp=None):
-        salt = app_config['USER_PASSWORD_SALT']
-        cipher = sha1((plain_password + salt).encode()).hexdigest()
-        return cipher
-
     @property
     def is_active(self):
         return not self.expired

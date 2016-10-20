@@ -38,8 +38,8 @@ class BaseTestCase(TestCase):
 
     def encode_password(self, plain_password, timestamp=None):
         from hashlib import sha1
-        raw_text = plain_password + self.password_salt
-        cipher = sha1(raw_text.encode()).hexdigest()
+        raw = (plain_password + self.password_salt).encode('utf-8')
+        cipher = sha1(raw).hexdigest()
         if timestamp is not None:
             cipher = sha1((cipher + str(timestamp)).encode()).hexdigest()
         return cipher

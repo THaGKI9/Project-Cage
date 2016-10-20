@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 from flask_script import Manager, prompt_bool
+from coverage import Coverage
+
+cov = Coverage(include=['./core/*'], branch=True)
+cov.start()
 
 
-def load_app(config='dev'):
+def load_app(config_name='dev'):
     import config
     from core import create_app
-
     configuration = {
         'dev': config.DevelopmentConfig,
         'test': config.TestingConfig
     }
-    app = create_app(configuration.get(config, config.DevelopmentConfig))
+    app = create_app(configuration.get(config_name, config.DevelopmentConfig))
     return app
 
 
@@ -22,12 +25,13 @@ def _make_context():
 
 
 manager = Manager(load_app)
-manager.option('-c', '--config', dest='config')
+manager.add_option('-c', '--config', dest='config_name')
 manager.shell(_make_context)
 
 setup_manager = Manager(usage='Application setup utilities')
 build_manager = Manager(usage='Application development utilities.')
 
+manager.add_command('setup', setup_manager)
 manager.add_command('build', build_manager)
 
 
@@ -96,15 +100,14 @@ def doc():
 @manager.option('-c', '--coverage', action='store_true')
 @manager.option('-v', '--verbosity', action='store_true')
 def test(module, func, coverage, verbosity):
-    from coverage import Coverage
     from unittest import TestLoader, TextTestRunner
     from os.path import abspath, normpath, dirname, join
     from sys import path
 
-    cov = None
     if coverage:
-        cov = Coverage(data_file='./core/*', branch=True)
-        cov.start()
+        print('Run unittest with coverage monitor.')
+    else:
+        cov.stop()
 
     runner = TextTestRunner(verbosity=2 if verbosity else 1)
     loader = TestLoader()

@@ -38,10 +38,6 @@ def create_app(config):
     event_emitted.connect(event_recorder, app)
     app.errorhandler(Exception)(exception_handler)
 
-    @app.route('/')
-    def index():
-        1 / 0
-
     return app
 
 

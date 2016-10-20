@@ -14,7 +14,7 @@ env/
 
 # Development
 doc/build/
-coverage_report/
+cov_report/
 
 # databases
 databases/*.db
