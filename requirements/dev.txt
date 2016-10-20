@@ -1,0 +1,4 @@
+sphinx_rtd_theme==0.1.9
+coverage==4.2
+ipython==5.1.0
+Sphinx==1.4.8

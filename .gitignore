@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Python
+pip-selfcheck.json
+*.py[cod]
+__pycache__/
+
+# virtualenv
+env/
+
+# Editor
+.vscode/
+
+# Development
+doc/build/
+coverage_report/
+
+# databases
+databases/*.db
