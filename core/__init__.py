@@ -1,7 +1,6 @@
-from sys import stderr
 from traceback import format_exc
 
-from flask import Flask, abort, current_app
+from flask import Flask, current_app
 from flask_babel import Babel
 from flask_login import LoginManager
 from playhouse.flask_utils import FlaskDB

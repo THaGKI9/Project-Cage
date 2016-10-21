@@ -99,7 +99,8 @@ def doc():
 @manager.option('-f', '--func')
 @manager.option('-c', '--coverage', action='store_true')
 @manager.option('-v', '--verbosity', action='store_true')
-def test(module, func, coverage, verbosity):
+@manager.option('-e', '--failfast', action='store_true')
+def test(module, func, coverage, verbosity, failfast):
     from unittest import TestLoader, TextTestRunner
     from os.path import abspath, normpath, dirname, join
     from sys import path
@@ -109,7 +110,7 @@ def test(module, func, coverage, verbosity):
     else:
         cov.stop()
 
-    runner = TextTestRunner(verbosity=2 if verbosity else 1)
+    runner = TextTestRunner(verbosity=2 if verbosity else 1, failfast=failfast)
     loader = TestLoader()
     tests = None
 
