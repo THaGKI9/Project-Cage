@@ -5,7 +5,7 @@ from flask_login import current_user
 
 from . import bp
 from core import app_config
-from core.models import Category, Permission
+from core.models import Article, Category, Permission
 from core.helpers import restful, permission_require, signals
 
 
@@ -238,28 +238,22 @@ def delete_category(id):
         // failed
         {
             errors: {
-                permission: 'you are not allowed to delete category '
-                            'created by other author',
+                not_empty: 'this category is not empty.',
                 id: 'this category does not exist.'
             }
         }
 
-    Permission:
-
-        * ``EDIT_CATEGORY``
-        * ``EDIT_OTHERS_CATEGORY`` (if attempt to delete
-          category created by other.)
+    Permission: ``EDIT_CATEGORY``
     """
     try:
-        this_category = Category.get(Category.id == id)
+        this_category = Category.select().annotate(Article) \
+                                .where(Category.id == id).get()
     except Category.DoesNotExist:
         return {'id': '该分类 %s 不存在' % id}
 
-    if this_category.create_by_id != current_user.get_id() \
-            and not current_user.can(Permission.EDIT_OTHERS_CATEGORY):
-        reason = ('You are not allowed to delete category '
-                  'created by other author.')
-        return {'permission': reason}
+    if this_category.count > 0:
+        return {'not_empty': '该分类下还有 %d 篇文章，请清空后再删除'
+                             % this_category.count}
 
     this_category.delete_instance()
 

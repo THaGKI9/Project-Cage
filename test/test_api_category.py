@@ -1,6 +1,6 @@
 from json import dumps as json_dumps
 
-from core.models import Category
+from core.models import Article, Category
 from test import BaseTestCase
 
 
@@ -189,27 +189,13 @@ class ApiCategoryTestCase(BaseTestCase):
         self.assertResponseRestful(resp)
         self.assertResponseErrorInField(resp, 'id')
 
-    def test_delete_cate_created_by_other_author(self):
-        self.logout()
-        self.login_as_author()
+    def test_delete_non_empty_cate(self):
         with self.app.test_request_context():
             cate = Category.create(id='testcate', name='testcate')
+            Article.create(id='testart', title='testart',
+                           text_type='md', source_text='# hello',
+                           category=cate)
 
-        self.login_as_su()
-        resp = self.client.delete(self.api_url_base + '/category/' + cate.id)
-        self.assertResponseRestfulAndSuccess(resp)
-
-        resp = self.get_category(cate.id)
-        self.assertResponseRestful(resp)
-        self.assertResponseErrorInField(resp, 'id')
-
-    def test_delete_cate_created_by_other_author_without_permission(self):
-        self.logout()
-        self.login_as_su()
-        with self.app.test_request_context():
-            cate = Category.create(id='testcate', name='testcate')
-
-        self.login_as_author()
         resp = self.client.delete(self.api_url_base + '/category/' + cate.id)
         self.assertResponseRestful(resp)
-        self.assertResponseErrorInField(resp, 'permission')
+        self.assertResponseErrorInField(resp, 'not_empty')

@@ -69,15 +69,16 @@ class Category(db.Model):
     create_by = ForeignKeyField(User, default=_get_user, null=True,
                                 on_update='CASCADE', on_delete='SET NULL')
 
-    @property
-    def article_count(self):
-        return Article.select().filter(Article.category == self.id).count()
+    def annotate(self):
+        return self.select().annotate(Article)
 
     def to_dict(self):
         rv_dict = OrderedDict()
         rv_dict['id'] = self.id
         rv_dict['name'] = self.name
-        rv_dict['article_count'] = self.article_count
+
+        if hasattr(self, 'count'):
+            rv_dict['article_count'] = self.count
         return rv_dict
 
 
@@ -88,7 +89,7 @@ class Article(db.Model):
     title = TextField()
     text_type = TextField()
     source_text = TextField()
-    content = TextField()
+    content = TextField(null=True)
     read_count = IntegerField(default=0)
     post_time = DateTimeField(default=datetime.utcnow)
     update_time = DateTimeField(default=datetime.utcnow)
