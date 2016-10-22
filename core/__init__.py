@@ -19,9 +19,11 @@ def create_app(config):
     config.init_app(app)
 
     # Configure Extensions
-    from .models import AnonymousUser
+    from .models import AnonymousUser, database_proxy
     db.init_app(app)
     db.connect_db()
+    database_proxy.initialize(db.database)
+
     babel.init_app(app)
     login_manager.init_app(app)
     login_manager.user_loader(user_loader)

@@ -72,10 +72,10 @@ class BaseTestCase(TestCase):
         return loads(resp.data.decode())
 
     def toggle_sql_echo(self):
-        if self.logger.level == 0:
-            self.logger.setLevel(logging.DEBUG)
+        if logger.level == 0:
+            logger.setLevel(logging.DEBUG)
         else:
-            self.logger.setLevel(logging.WARNING)
+            logger.setLevel(logging.WARNING)
 
     def assertResponseOk(self, resp):
         self.assertEqual(resp.status_code, 200)

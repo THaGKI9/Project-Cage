@@ -8,6 +8,8 @@ from core import app_config
 from core.models import Article, Category, Permission
 from core.helpers import restful, permission_require, signals
 
+from peewee import fn
+
 
 @bp.route('/categories/')
 @restful
@@ -41,7 +43,7 @@ def get_categories():
     """
     supported_key = {
         'create_time': Category.create_time,
-        'article_count': Category.article_count,
+        'article_count': fn.Count(Article.id),
         'name': Category.name
     }
     default_key = supported_key['create_time']
@@ -50,7 +52,7 @@ def get_categories():
     if request.args.get('desc', 'false') == 'true':
         order_key = order_key.desc()
 
-    raw_categories = Category.select().order_by(order_key)
+    raw_categories = Category.query().order_by(order_key)
     categories = [category.to_dict() for category in raw_categories]
     return None, {'categories': categories}
 
@@ -246,8 +248,7 @@ def delete_category(id):
     Permission: ``EDIT_CATEGORY``
     """
     try:
-        this_category = Category.select().annotate(Article) \
-                                .where(Category.id == id).get()
+        this_category = Category.query().where(Category.id == id).get()
     except Category.DoesNotExist:
         return {'id': '该分类 %s 不存在' % id}
 

@@ -44,6 +44,33 @@ class ApiCategoryTestCase(BaseTestCase):
         nums = [int(cate['name'][len(prefix):]) for cate in categories][::-1]
         self.assertListEqual(nums, list(range(insert_amount)))
 
+    def test_get_cates_order_by_article_count(self):
+        insert_amount = 10
+        prefix = 'testcate'
+
+        with self.app.test_request_context(), self.db.atomic():
+            cates = [dict(id=prefix + str(i), name=prefix + str(i))
+                     for i in range(insert_amount)]
+
+            Category.insert_many(cates).execute()
+
+            for index, cate in enumerate(cates):
+                articles = [dict(id=str(index) + str(i), title='hello',
+                                 text_type='md', source_text='# hello',
+                                 category=cate['id'])
+                            for i in range((index + 1) * 2)]
+
+                Article.insert_many(articles).execute()
+
+        resp = self.client.get(self.api_url_base + '/categories/',
+                               query_string={'order': 'article_count',
+                                             'desc': 'true'})
+        self.assertResponseRestfulAndSuccess(resp)
+        categories = self.get_json(resp)['categories']
+        result_counts = [cate['article_count'] for cate in categories]
+        expected_counts = sorted(result_counts, reverse=True)
+        self.assertListEqual(result_counts, expected_counts)
+
     def test_create_cate(self):
         payload_json = {'id': 'testcate', 'name': 'testcate'}
 

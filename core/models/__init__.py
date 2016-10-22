@@ -6,22 +6,33 @@ from flask import request
 from flask_login import AnonymousUserMixin, UserMixin, current_user
 from peewee import (BigIntegerField, BooleanField, DateTimeField,
                     ForeignKeyField, IntegerField, TextField)
+from peewee import JOIN, Proxy, Model, fn
 
-from core import app_config, db
+from core import app_config
 from core.helpers import make_raw_request_line
 
 from .permission import Permission
 
 
-db.Model._meta.only_save_dirty = True
+database_proxy = Proxy()
 
 
 def _get_user():
     return current_user.get_id()
 
 
+class _Model(Model):
+    @classmethod
+    def exist(cls, where_clause):
+        return cls.select().where(where_clause).count() > 0
+
+    class Meta:
+        database = database_proxy
+        only_save_dirty = True
+
+
 # Database Model
-class User(db.Model, UserMixin):
+class User(_Model, UserMixin):
     id = TextField(primary_key=True)
     name = TextField(unique=True, null=False)
     password = TextField(null=False)
@@ -62,15 +73,18 @@ class User(db.Model, UserMixin):
         return not self.expired
 
 
-class Category(db.Model):
+class Category(_Model):
     id = TextField(primary_key=True)
     name = TextField(unique=True)
     create_time = DateTimeField(default=datetime.utcnow)
     create_by = ForeignKeyField(User, default=_get_user, null=True,
                                 on_update='CASCADE', on_delete='SET NULL')
 
-    def annotate(self):
-        return self.select().annotate(Article)
+    @classmethod
+    def query(cls):
+        return cls.select(cls, fn.Count(Article.id).alias('count')) \
+                  .join(Article, JOIN.LEFT_OUTER) \
+                  .switch(cls).group_by(cls)
 
     def to_dict(self):
         rv_dict = OrderedDict()
@@ -82,7 +96,7 @@ class Category(db.Model):
         return rv_dict
 
 
-class Article(db.Model):
+class Article(_Model):
     id = TextField(primary_key=True)
 
     is_commentable = BooleanField(default=True)
@@ -102,20 +116,23 @@ class Article(db.Model):
                              on_delete='SET NULL', on_update='CASCADE',
                              related_name='articles')
 
-    @property
-    def comment_count(self):
-        return Comment.select().filter(Comment.article == self.id).count()
+    @classmethod
+    def query(cls):
+        query = cls.select(Article, Category, User) \
+                   .join(Category, JOIN.LEFT_OUTER) \
+                   .join(User, JOIN.LEFT_OUTER)
+        return query
 
     def to_dict(self, with_content=False, with_src=False):
         rv_dict = OrderedDict()
         rv_dict['id'] = self.id
         rv_dict['title'] = self.title
-        rv_dict['author'] = OrderedDict()
         if self.author:
+            rv_dict['author'] = OrderedDict()
             rv_dict['author']['id'] = self.author.id
             rv_dict['author']['name'] = self.author.name
-        rv_dict['category'] = OrderedDict()
         if self.category:
+            rv_dict['category'] = OrderedDict()
             rv_dict['category']['id'] = self.category.id
             rv_dict['category']['name'] = self.category.name
         if with_content:
@@ -130,7 +147,7 @@ class Article(db.Model):
         return rv_dict
 
 
-class Comment(db.Model):
+class Comment(_Model):
     content = TextField()
     nickname = TextField(null=True)
     reviewed = BooleanField(default=False)
@@ -161,7 +178,7 @@ class Comment(db.Model):
         return rv_dict
 
 
-class Event(db.Model):
+class Event(_Model):
     type = TextField()
     description = TextField()
     ip_address = TextField(default=lambda: request.remote_addr, null=True)
