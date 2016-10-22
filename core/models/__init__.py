@@ -137,6 +137,7 @@ class Article(_Model):
             rv_dict['category']['name'] = self.category.name
         if with_content:
             rv_dict['content'] = self.content
+        rv_dict['public'] = self.public
         rv_dict['is_commentable'] = self.is_commentable
         rv_dict['read_count'] = self.read_count
         rv_dict['post_time'] = self.post_time
