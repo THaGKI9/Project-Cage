@@ -90,4 +90,6 @@ class BaseTestCase(TestCase):
 
     def assertResponseErrorInField(self, resp, error_field):
         self.assertResponseRestful(resp)
+        json = self.get_json(resp)
+        self.assertIsInstance(json['errors'], dict)
         self.assertIn(error_field, self.get_json(resp)['errors'])

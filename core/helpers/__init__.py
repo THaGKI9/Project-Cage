@@ -8,6 +8,7 @@ from flask_login import current_user
 from core import app_config
 
 from .signals import event_emitted  # noqa
+from .renderer import RendererCollection  # noqa
 
 
 def permission_require(permission):
