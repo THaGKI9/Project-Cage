@@ -86,10 +86,17 @@ class BaseTestCase(TestCase):
 
     def assertResponseRestfulAndSuccess(self, resp):
         self.assertResponseRestful(resp)
-        self.assertIsNone(self.get_json(resp)['errors'])
+        self.assertIsNone(self.get_json(resp)['$errors'])
+
+    def assertJSONHasKey(self, resp_or_dict, key):
+        if isinstance(resp_or_dict, dict):
+            json = resp_or_dict
+        else:
+            json = self.get_json(resp_or_dict)
+        self.assertIn(key, json)
 
     def assertResponseErrorInField(self, resp, error_field):
         self.assertResponseRestful(resp)
-        json = self.get_json(resp)
-        self.assertIsInstance(json['errors'], dict)
-        self.assertIn(error_field, self.get_json(resp)['errors'])
+        json = self.get_json(resp)['$errors']
+        self.assertIsInstance(json, dict)
+        self.assertIn(error_field, json)

@@ -28,7 +28,7 @@ def get_users():
 
         // success
         {
-            errors: null,
+            $errors: null,
             users: [
                 {
                     id: string,
@@ -58,7 +58,7 @@ def get_users():
 @restful
 @permission_require(Permission.READ_USER)
 def get_user(id):
-    """``GET`` |API_URL_BASE|/user/
+    """``GET`` |API_URL_BASE|/user/:user_id
 
     Get information of a user.
 
@@ -68,7 +68,7 @@ def get_user(id):
 
         // success
         {
-            errors: null,
+            $errors: null,
             users: {
                 id: string,
                 name: string,
@@ -79,7 +79,7 @@ def get_user(id):
         }
 
         // failed
-        {errors: {id: 'this user does not exist.'}}
+        {$errors: {id: 'this user does not exist.'}}
 
     Permission required: ``READ_USER``
     """
@@ -111,7 +111,7 @@ def add_user():
 
         // success
         {
-            errors: null,
+            $errors: null,
             user: {
                 id: string,
                 name: string,
@@ -122,7 +122,7 @@ def add_user():
 
         // failed
         {
-            errors: {
+            $errors: {
                 id: 'this id is invalid'.
                 name: 'this name is invalid.',
                 password: 'this password is invalid',
@@ -177,7 +177,8 @@ def add_user():
 @restful
 @permission_require(Permission.MODIFY_USER)
 def modify_user(id=None):
-    """``PATCH`` |API_URL_BASE|/user/(<user id>)
+    """``PATCH`` |API_URL_BASE|/user/
+    ``PATCH`` |API_URL_BASE|/user/:user_id
 
     Modify user information. User's role can't be modified.
     If no ``id`` was given then id will be automatically set to
@@ -193,7 +194,7 @@ def modify_user(id=None):
 
         // success
         {
-            errors: null,
+            $errors: null,
             user: {
                 id: string,
                 name: string,
@@ -205,7 +206,7 @@ def modify_user(id=None):
 
         // failed
         {
-            errors: {
+            $errors: {
                 permission: 'your are not allowed to change other user.',
                 name: 'this name is invalid.',
                 password: 'this password is invalid',
@@ -273,7 +274,7 @@ def modify_user(id=None):
 @permission_require(Permission.DELETE_USER)
 @restful
 def delete_user(id):
-    """``DELETE`` |API_URL_BASE|/user/<user id>
+    """``DELETE`` |API_URL_BASE|/user/:user_id
 
     Delete a user. Superuser can't be deleted.
 
@@ -284,10 +285,10 @@ def delete_user(id):
     .. code-block:: javascript
 
         // success
-        {errors: null}
+        {$errors: null}
 
         // failed
-        {errors: {id: 'this is user does not exist.'}}
+        {$errors: {id: 'this is user does not exist.'}}
 
     Permission require: ``DELETE_USER``
     """

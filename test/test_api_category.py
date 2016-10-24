@@ -115,7 +115,7 @@ class ApiCategoryTestCase(BaseTestCase):
                                 content_type='application/json',
                                 data=json_dumps(payload_json))
         self.assertResponseRestful(resp)
-        self.assertIn('id', self.get_json(resp)['errors'])
+        self.assertResponseErrorInField(resp, 'id')
 
     def test_create_cate_using_duplicated_name(self):
         payload_json = {'id': 'testcate', 'name': 'testcate'}
@@ -129,7 +129,7 @@ class ApiCategoryTestCase(BaseTestCase):
                                 content_type='application/json',
                                 data=json_dumps(payload_json))
         self.assertResponseRestful(resp)
-        self.assertIn('name', self.get_json(resp)['errors'])
+        self.assertResponseErrorInField(resp, 'name')
 
     def test_modify_cate(self):
         self.logout()

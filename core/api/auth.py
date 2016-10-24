@@ -28,7 +28,7 @@ def login():
 
         // success
         {
-            errors: null,
+            $errors: null,
             user: {
                 id: string,
                 name: string,
@@ -40,7 +40,7 @@ def login():
 
         // failed
         {
-            errors: {
+            $errors: {
                 id: 'this user id does not exist.',
                 password: 'user id can not match this password.',
                 timestamp: 'login session is invalid any more. please refresh.'

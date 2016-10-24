@@ -24,7 +24,7 @@ def _get_user():
 class _Model(Model):
     @classmethod
     def exist(cls, where_clause):
-        return cls.select().where(where_clause).count() > 0
+        return cls.select().where(where_clause).exists() > 0
 
     class Meta:
         database = database_proxy
@@ -150,19 +150,21 @@ class Article(_Model):
 
 class Comment(_Model):
     content = TextField()
-    nickname = TextField(null=True)
+    nickname = TextField()
     reviewed = BooleanField(default=False)
+    is_author = BooleanField(default=False)
     create_time = DateTimeField(default=datetime.utcnow)
     ip_address = TextField(default=lambda: request.remote_addr, null=True)
-    is_anonymous = BooleanField(default=False)
 
     user = ForeignKeyField(User, default=_get_user, null=True,
                            on_update='CASCADE', on_delete='CASCADE')
     article = ForeignKeyField(Article,
                               on_update='CASCADE', on_delete='CASCADE')
-    parent = ForeignKeyField('self', null=True,
-                             on_delete='CASCADE', on_update='CASCADE',
-                             related_name='sub_comments')
+    reply_to = ForeignKeyField('self', null=True,
+                               on_delete='SET NULL', on_update='CASCADE')
+
+    def __repr__(self):
+        return '<Comment id=%d, parent_id=%s>' % (self.id, self.parent_id)
 
     @property
     def display_name(self):
@@ -170,12 +172,13 @@ class Comment(_Model):
 
     def to_dict(self):
         rv_dict = OrderedDict()
-        rv_dict['comment_id'] = self.id
+        rv_dict['id'] = self.id
         rv_dict['content'] = self.content
-        rv_dict['author'] = self.display_name
-        rv_dict['time'] = self.time
-        rv_dict['replies'] = [comments.to_dict()
-                              for comments in self.sub_comments]
+        rv_dict['nickname'] = self.nickname
+        if self.is_author:
+            rv_dict['is_author'] = self.is_author
+        rv_dict['create_time'] = self.create_time
+        rv_dict['reply_to'] = self.reply_to_id
         return rv_dict
 
 

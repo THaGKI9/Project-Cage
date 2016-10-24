@@ -92,7 +92,7 @@ def get_articles():
 @restful
 @permission_require(Permission.READ_ARTICLE)
 def get_an_article(id):
-    """``GET`` |API_URL_BASE|/article/<article id>
+    """``GET`` |API_URL_BASE|/article/:article_id
 
     Get an article.
 
@@ -107,7 +107,7 @@ def get_an_article(id):
 
         // success
         {
-            errors: null,
+            $errors: null,
             article: {
                 id: string,
                 title: string,
@@ -124,7 +124,7 @@ def get_an_article(id):
 
         // failed
         {
-            errors: {
+            $errors: {
                 permission: 'you are not allowed to read the source.',
                 permission: 'you are not allowed to read a private article',
                 id: 'can not found this article. maybe it has
@@ -260,7 +260,7 @@ def post_article():
 @restful
 @permission_require(Permission.POST_ARTICLE)
 def edit_article(id):
-    """``PATCH`` |API_URL_BASE|/article/<article id>
+    """``PATCH`` |API_URL_BASE|/article/:article_id
 
     Edit an article. ID and title are unchangable.
 
@@ -279,7 +279,7 @@ def edit_article(id):
 
         // success
         {
-            errors: null,
+            $errors: null,
             article: {
                 id: string,
                 title: string,
@@ -293,7 +293,7 @@ def edit_article(id):
 
         // failed
         {
-            errors: {
+            $errors: {
                 id: 'this article does not exist.',
                 permission: 'your are not allowed to edit article
                              posted by other author'
@@ -374,7 +374,7 @@ def edit_article(id):
 @restful
 @permission_require(Permission.EDIT_ARTICLE)
 def delete_article(id):
-    """``DELETE`` |API_URL_BASE|/article/<article id>
+    """``DELETE`` |API_URL_BASE|/article/:article_id
 
     Delete an article.
 
@@ -433,7 +433,7 @@ def get_article_types():
     .. code-block:: javascript
 
         {
-            errors: null,
+            $errors: null,
             types: [
                 {
                     ext: 'extension',

@@ -21,7 +21,12 @@ def _make_context():
     global manager
     app = manager()
     from core import db, models
-    return dict(app=app, db=db, models=models)
+    from core.models import tables
+
+    models_dict = {t.__name__: t for t in tables}
+    context = dict(app=app, db=db, models=models)
+    context.update(models_dict)
+    return context
 
 
 manager = Manager(load_app)

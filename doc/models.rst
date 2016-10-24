@@ -67,7 +67,9 @@ nickname       Text
 reviewed       Boolean        True: every readers can see this comment
 create_time    DateTime
 ip_address     Text
-is_anonymous   Boolean
+article        Text           Foreign Key: :ref:`article`
+user           Text           Foreign Key: :ref:`user`
+refer_to       Text           Comment refers to. Foreign Key: :ref:`comment`
 ============== ============== =============================================
 
 .. _event:

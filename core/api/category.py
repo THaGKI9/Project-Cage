@@ -29,7 +29,7 @@ def get_categories():
 
         // success
         {
-            errors: null,
+            $errors: null,
             categories: [
                 {
                     id: string,
@@ -61,7 +61,7 @@ def get_categories():
 @restful
 @permission_require(Permission.READ_CATEGORY)
 def get_a_category(id):
-    """``GET`` |API_URL_BASE|/category/
+    """``GET`` |API_URL_BASE|/category/:category_id
 
     Get a category.
 
@@ -71,7 +71,7 @@ def get_a_category(id):
 
         // success
         {
-            errors: null,
+            $errors: null,
             category: {
                 id: string,
                 name: string,
@@ -92,7 +92,7 @@ def get_a_category(id):
 @restful
 @permission_require(Permission.CREATE_CATEGORY)
 def create_category():
-    """``POST`` |API_URL_BASE|/category/
+    """``POST`` |API_URL_BASE|/category/:category_id
 
     Create a category.
 
@@ -105,7 +105,7 @@ def create_category():
 
         // success
         {
-            errors: null,
+            $errors: null,
             category: {
                 id: string,
                 name: string,
@@ -115,7 +115,7 @@ def create_category():
 
         // failed
         {
-            errors: {
+            $errors: {
                 id: 'this id is invalid.',
                 name: 'this name is invalid.',
                 id: 'this id is duplicated.'
@@ -155,7 +155,7 @@ def create_category():
 @restful
 @permission_require(Permission.EDIT_CATEGORY)
 def edit_category(id):
-    """``PATCH`` |API_URL_BASE|/category/<category id>
+    """``PATCH`` |API_URL_BASE|/category/:category_id
 
     Edit a category. Currently only support modify category name.
 
@@ -167,7 +167,7 @@ def edit_category(id):
 
         // success
         {
-            errors: null,
+            $errors: null,
             category: {
                 id: integer,
                 name: string,
@@ -177,7 +177,7 @@ def edit_category(id):
 
         // failed
         {
-            errors: {
+            $errors: {
                 permission: 'you are not allowed to modify category '
                             'created by other author',
                 name: 'this name is invalid.'
@@ -224,7 +224,7 @@ def edit_category(id):
 @restful
 @permission_require(Permission.EDIT_CATEGORY)
 def delete_category(id):
-    """``DELETE`` |API_URL_BASE|/cate/<category id>
+    """``DELETE`` |API_URL_BASE|/cate/:category_id
 
     Delete a category.
 
@@ -235,11 +235,11 @@ def delete_category(id):
     .. code-block:: javascript
 
         // success
-        {errors: null}
+        {$errors: null}
 
         // failed
         {
-            errors: {
+            $errors: {
                 not_empty: 'this category is not empty.',
                 id: 'this category does not exist.'
             }

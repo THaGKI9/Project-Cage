@@ -38,7 +38,7 @@ def restful(func):
     .. code-block:: javascript
 
         {
-            errors:  string or object,
+            $errors:  string or object,
             // data
         }
     """
@@ -50,7 +50,7 @@ def restful(func):
             result = (result, )
 
         if len(result) > 0:
-            rv_dict['errors'] = result[0]
+            rv_dict['$errors'] = result[0]
 
         if len(result) > 1:
             rv_dict.update(result[1])

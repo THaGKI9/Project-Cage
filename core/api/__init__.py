@@ -8,3 +8,4 @@ from . import user
 from . import auth
 from . import category
 from . import article
+from . import comment

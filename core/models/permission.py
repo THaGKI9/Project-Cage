@@ -44,10 +44,9 @@ class Permission(Enum):
     EDIT_OTHERS_CATEGORY = Flag(8 + 8, '')
 
     READ_COMMENT = Flag(16 + 1, '')
-    READ_ALL_COMMENT = Flag(16 + 2, '')
-    WRITE_COMMENT = Flag(16 + 3, '')
-    REVIEW_COMMENT = Flag(16 + 4, '')
-    REIVEW_OTHERS_COMMENT = Flag(16 + 5, '')
+    WRITE_COMMENT = Flag(16 + 2, '')
+    REVIEW_COMMENT = Flag(16 + 3, '')
+    REIVEW_OTHERS_COMMENT = Flag(16 + 4, '')
 
     @classmethod
     def add_group(cls, name, flags):
@@ -165,7 +164,6 @@ Permission.add_group(
     name='Comment Operation',
     flags=[
         Permission.READ_COMMENT,
-        Permission.READ_ALL_COMMENT,
         Permission.WRITE_COMMENT,
         Permission.REVIEW_COMMENT,
         Permission.REIVEW_OTHERS_COMMENT
@@ -196,7 +194,6 @@ preset_for_author = Permission.parse_permission([
     Permission.CREATE_CATEGORY,
     Permission.EDIT_CATEGORY,
     Permission.READ_COMMENT,
-    Permission.READ_ALL_COMMENT,
     Permission.WRITE_COMMENT,
     Permission.REVIEW_COMMENT
 ])
